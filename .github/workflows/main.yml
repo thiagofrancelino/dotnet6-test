@@ -1,0 +1,22 @@
+name: CI
+
+on:
+  push:
+    branches:
+    - main
+    - release/*
+
+jobs:
+  build_carteiracidada:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+    - name: Build and deploy the Docker image
+      env: 
+        HEROKU_API_KEY: ${{ '3a434adb-85bf-4539-9bdc-518062ce30ca' }}
+        APP_NAME: ${{ 'dotnet6test' }}
+      run: |
+        cd ./
+        docker login --username=_ --password=$HEROKU_API_KEY registry.heroku.com
+        heroku container:push web -a $APP_NAME
+        heroku container:release web -a $APP_NAME
